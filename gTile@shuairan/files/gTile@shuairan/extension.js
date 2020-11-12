@@ -69,6 +69,10 @@ function initSettings() {
   settings = new Settings.ExtensionSettings(preferences, 'gTile@shuairan');
   //hotkey
   settings.bindProperty(Settings.BindingDirection.IN, 'hotkey', 'hotkey', enableHotkey, null);
+  settings.bindProperty(Settings.BindingDirection.IN, 'hotkeyMoveLeft', 'hotkeyMoveLeft', enableHotkeyMoveLeft, null);
+  settings.bindProperty(Settings.BindingDirection.IN, 'hotkeyMoveRight', 'hotkeyMoveRight', enableHotkeyMoveRight, null);
+  settings.bindProperty(Settings.BindingDirection.IN, 'hotkeyMoveCenter', 'hotkeyMoveCenter', enableHotkeyMoveCenter, null);
+
   //grid (nbCols and nbRows)
   settings.bindProperty(Settings.BindingDirection.OUT, 'lastGridRows', 'nbCols');
   settings.bindProperty(Settings.BindingDirection.OUT, 'lastGridCols', 'nbRows');
@@ -99,6 +103,12 @@ function initGridSettings() {
     let sgby = basestr + i + 'y';
     let gbx = settings.getValue(sgbx);
     let gby = settings.getValue(sgby);
+    // global.log("inigGridSettings:")
+    // global.log("sgbx: " + sgbx)
+    // global.log("sgby: " + sgby)
+    // global.log("gbx: " + gbx)
+    // global.log("gby: " + gby)
+
     gridSettingsButton.push(new GridSettingsButton(gbx + 'x' + gby, gbx, gby));
   }
 }
@@ -129,6 +139,9 @@ function enable() {
   initGrids();
 
   enableHotkey();
+  enableHotkeyMoveLeft();
+  enableHotkeyMoveRight();
+  enableHotkeyMoveCenter();;
 
   tracker.connect(
     'notify::focus-app',
@@ -144,6 +157,9 @@ function enable() {
 function disable() {
   // Key Bindings
   disableHotkey();
+  disableHotkeyMoveLeft();
+  disableHotkeyMoveRight();
+  disableHotkeyMoveCenter();
 
   destroyGrids();
   resetFocusMetaWindow();
@@ -156,6 +172,33 @@ function enableHotkey() {
 
 function disableHotkey() {
   Main.keybindingManager.removeHotKey('gTile');
+}
+
+function enableHotkeyMoveLeft() {
+  disableHotkeyMoveLeft();
+  Main.keybindingManager.addHotKey('gTile-move-left', preferences.hotkeyMoveLeft, moveLeft);
+}
+
+function disableHotkeyMoveLeft() {
+  Main.keybindingManager.removeHotKey('gTile-move-left');
+}
+
+function enableHotkeyMoveRight() {
+  disableHotkeyMoveRight();
+  Main.keybindingManager.addHotKey('gTile-move-right', preferences.hotkeyMoveRight, moveRight);
+}
+
+function disableHotkeyMoveRight() {
+  Main.keybindingManager.removeHotKey('gTile-move-right');
+}
+
+function enableHotkeyMoveCenter() {
+  disableHotkeyMoveCenter();
+  Main.keybindingManager.addHotKey('gTile-move-center', preferences.hotkeyMoveCenter, moveCenter);
+}
+
+function disableHotkeyMoveCenter() {
+  Main.keybindingManager.removeHotKey('gTile-move-center');
 }
 
 function reinitalize() {
@@ -231,6 +274,8 @@ function moveGrids() {
   }
 
   let window = focusMetaWindow;
+  // global.log("window: " + focusMetaWindow);
+
   if (!window) return;
   for (let gridIdx in grids) {
     let grid = grids[gridIdx];
@@ -249,6 +294,7 @@ function moveGrids() {
 
     pos_x = Math.floor(pos_x - grid.actor.width / 2);
     pos_y = Math.floor(pos_y - grid.actor.height / 2);
+
 
     if (isGridMonitor) {
       pos_x = pos_x < monitor.x ? monitor.x : pos_x;
@@ -319,6 +365,9 @@ function move_resize_window(metaWindow, x, y, width, height) {
   width = width - vBorderX;
   height = height - vBorderY;
 
+  global.log("width adjusted for border: " + width);
+  global.log("height adjusted for border: " + height);
+
   metaWindow.resize(true, width, height);
   metaWindow.move_frame(true, x, y);
 }
@@ -378,6 +427,7 @@ function getNotFocusedWindowsOfMonitor(monitor) {
 }
 
 function _onFocus() {
+  // global.log("_onFocus");
   let window = getFocusApp();
   if (!window) {
     resetFocusMetaWindow();
@@ -422,6 +472,7 @@ function _onFocus() {
 }
 
 function showTiling() {
+  global.log("showTiling");
   focusMetaWindow = getFocusApp();
   let wm_type = focusMetaWindow.get_window_type();
   let layer = focusMetaWindow.get_layer();
@@ -473,12 +524,34 @@ function hideTiling() {
 }
 
 function toggleTiling() {
+  global.log("toggleTiling");
   if (status) {
     hideTiling();
   } else {
     showTiling();
   }
   return status;
+}
+
+function moveLeft() {
+  //1376
+  reset_window(focusMetaWindow);
+  focusMetaWindow.resize(true, 1462.857142857143, 1411);
+  focusMetaWindow.move_frame(true, 0, 0);
+  // move_resize_window(focusMetaWindow, 0, 0, 1706, 1411);
+  // move_maximize_window(focusMetaWindow, 1706, 1411);
+}
+
+function moveCenter() {
+  reset_window(focusMetaWindow);
+  focusMetaWindow.resize(true, 2194.285714285714, 1411);
+  focusMetaWindow.move_frame(true, 1462.857142857143, 0);
+}
+
+function moveRight() {
+  reset_window(focusMetaWindow);
+  focusMetaWindow.resize(true, 1462.857142857143, 1411);
+  focusMetaWindow.move_frame(true, 3657.1428571428573, 0);
 }
 
 function getMonitorKey(monitor) {
@@ -1238,6 +1311,7 @@ GridElementDelegate.prototype = {
       let areaWidth, areaHeight, areaX, areaY;
       [areaX, areaY, areaWidth, areaHeight] = this._computeAreaPositionSize(this.first, gridElement);
 
+      global.log([areaX, areaY, areaWidth, areaHeight]);
       if (this._allSelected()) {
         move_maximize_window(focusMetaWindow, areaX, areaY);
       } else {
@@ -1374,6 +1448,7 @@ function GridElement(monitor, width, height, coordx, coordy) {
 
 GridElement.prototype = {
   _init: function(monitor, width, height, coordx, coordy) {
+    // global.log("GridElement init: " + width + "-" + height);
     this.actor = new St.Button({
       style_class: 'table-element',
       width: width,
@@ -1414,10 +1489,14 @@ GridElement.prototype = {
   },
 
   _onButtonPress: function() {
+    global.log("_onButtonPress");
+    // global.log("this.actor._delegate: " + this.actor._delegate);
+    // global.log(this.actor._delegate);
     this.actor._delegate._onButtonPress(this);
   },
 
   _onHoverChanged: function() {
+    global.log("_onHoverChanged");
     if (!this.actor || isFinalized(this.actor)) return;
     this.actor._delegate._onHoverChanged(this);
   },

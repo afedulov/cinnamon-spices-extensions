@@ -9,6 +9,21 @@
     "default" : "<Super>g",
     "description" : "Global Hotkey for gTile"
  },
+ "hotkeyMoveLeft": {
+    "type" : "keybinding",
+    "default" : "<Super><Shift>Left",
+    "description" : "Move window left"
+ },
+ "hotkeyMoveRight": {
+    "type" : "keybinding",
+    "default" : "<Super><Shift>Right",
+    "description" : "Move window left"
+ },
+ "hotkeyMoveCenter": {
+    "type" : "keybinding",
+    "default" : "<Super><Shift>Up",
+    "description" : "Move window center"
+ },
  "seperator1" : {
 	"type" : "separator"
  },
