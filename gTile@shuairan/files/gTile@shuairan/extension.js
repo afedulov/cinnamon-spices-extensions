@@ -72,6 +72,7 @@ function initSettings() {
   settings.bindProperty(Settings.BindingDirection.IN, 'hotkeyMoveLeft', 'hotkeyMoveLeft', enableHotkeyMoveLeft, null);
   settings.bindProperty(Settings.BindingDirection.IN, 'hotkeyMoveRight', 'hotkeyMoveRight', enableHotkeyMoveRight, null);
   settings.bindProperty(Settings.BindingDirection.IN, 'hotkeyMoveCenter', 'hotkeyMoveCenter', enableHotkeyMoveCenter, null);
+  settings.bindProperty(Settings.BindingDirection.IN, 'hotkeyMoveRightExtended', 'hotkeyMoveRightExtended', enableHotkeyMoveRightExtended, null);
 
   //grid (nbCols and nbRows)
   settings.bindProperty(Settings.BindingDirection.OUT, 'lastGridRows', 'nbCols');
@@ -141,7 +142,8 @@ function enable() {
   enableHotkey();
   enableHotkeyMoveLeft();
   enableHotkeyMoveRight();
-  enableHotkeyMoveCenter();;
+  enableHotkeyMoveCenter();
+  enableHotkeyMoveRightExtended();
 
   tracker.connect(
     'notify::focus-app',
@@ -199,6 +201,15 @@ function enableHotkeyMoveCenter() {
 
 function disableHotkeyMoveCenter() {
   Main.keybindingManager.removeHotKey('gTile-move-center');
+}
+
+function enableHotkeyMoveRightExtended() {
+  disableHotkeyMoveRightExtended();
+  Main.keybindingManager.addHotKey('gTile-move-right-extended', preferences.hotkeyMoveRightExtended, moveRightExtended);
+}
+
+function disableHotkeyMoveRightExtended() {
+  Main.keybindingManager.removeHotKey('gTile-move-right-extended');
 }
 
 function reinitalize() {
@@ -552,6 +563,14 @@ function moveRight() {
   reset_window(focusMetaWindow);
   focusMetaWindow.resize(true, 1462.857142857143, 1411);
   focusMetaWindow.move_frame(true, 3657.1428571428573, 0);
+}
+
+function moveRightExtended() {
+  reset_window(focusMetaWindow);
+  // 3657.142857142857  - width
+  focusMetaWindow.resize(true, 3657.142857142857, 1411);
+  // 1462.857142857143 - left top corner position
+  focusMetaWindow.move_frame(true, 1462.857142857143, 0);
 }
 
 function getMonitorKey(monitor) {

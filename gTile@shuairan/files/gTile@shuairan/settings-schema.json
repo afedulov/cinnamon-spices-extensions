@@ -24,6 +24,11 @@
     "default" : "<Super><Shift>Up",
     "description" : "Move window center"
  },
+ "hotkeyMoveRightExtended": {
+    "type" : "keybinding",
+    "default" : "<Super><Shift>Down",
+    "description" : "Move window right extended"
+ },
  "seperator1" : {
 	"type" : "separator"
  },
