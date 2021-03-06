@@ -162,6 +162,7 @@ function disable() {
   disableHotkeyMoveLeft();
   disableHotkeyMoveRight();
   disableHotkeyMoveCenter();
+  enableHotkeyMoveRightExtended();
 
   destroyGrids();
   resetFocusMetaWindow();
@@ -546,31 +547,40 @@ function toggleTiling() {
 
 function moveLeft() {
   //1376
-  reset_window(focusMetaWindow);
-  focusMetaWindow.resize(true, 1462.857142857143, 1411);
-  focusMetaWindow.move_frame(true, 0, 0);
+  // reset_window(focusMetaWindow);
+
   // move_resize_window(focusMetaWindow, 0, 0, 1706, 1411);
   // move_maximize_window(focusMetaWindow, 1706, 1411);
+  // let monitor = this.grid.monitor;
+  // let [screenX, screenY, screenWidth, screenHeight] = getUsableScreenArea(monitor);
+  // let windows = getNotFocusedWindowsOfMonitor(monitor);
+  //
+  // global.log("monitor: " + monitor);
+  // global.log("screenX: " + screenX);
+  // global.log("screenY: " + screenY);
+  // global.log("screenWidth: " + screenWidth);
+  // global.log("screenHeight: " + screenHeight);
+
+  // move_resize_window(focusMetaWindow, 0, 0, 1706, 1411);
+  // move_maximize_window(focusMetaWindow, 1706, 1411);
+  move_resize_window(focusMetaWindow, 0, 0, 1462.857142857143, 1411);
 }
 
 function moveCenter() {
-  reset_window(focusMetaWindow);
-  focusMetaWindow.resize(true, 2194.285714285714, 1411);
-  focusMetaWindow.move_frame(true, 1462.857142857143, 0);
+  move_resize_window(focusMetaWindow, 1462.857142857143, 0, 2194.285714285714, 1411);
 }
 
 function moveRight() {
-  reset_window(focusMetaWindow);
-  focusMetaWindow.resize(true, 1462.857142857143, 1411);
-  focusMetaWindow.move_frame(true, 3657.1428571428573, 0);
+  move_resize_window(focusMetaWindow, 3657.1428571428573, 0, 1462.857142857143, 1411);
 }
 
 function moveRightExtended() {
-  reset_window(focusMetaWindow);
+  // reset_window(focusMetaWindow);
   // 3657.142857142857  - width
-  focusMetaWindow.resize(true, 3657.142857142857, 1411);
+  // focusMetaWindow.resize(true, 3657.142857142857, 1411);
   // 1462.857142857143 - left top corner position
-  focusMetaWindow.move_frame(true, 1462.857142857143, 0);
+  // focusMetaWindow.move_frame(true, 1462.857142857143, 0);
+  move_resize_window(focusMetaWindow, 1462.857142857143, 0, 3657.142857142857, 1411);
 }
 
 function getMonitorKey(monitor) {
